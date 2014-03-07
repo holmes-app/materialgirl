@@ -1,0 +1,111 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Materialgirl by heynemann</title>
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <script src="javascripts/scale.fix.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1 class="header">Materialgirl</h1>
+        <p class="header">MaterialGirl is a library to keep materialized views and consolidations up-to-date.</p>
+
+        <ul>
+          <li class="download"><a class="buttons" href="https://github.com/heynemann/materialgirl/zipball/master">Download ZIP</a></li>
+          <li class="download"><a class="buttons" href="https://github.com/heynemann/materialgirl/tarball/master">Download TAR</a></li>
+          <li><a class="buttons github" href="https://github.com/heynemann/materialgirl">View On GitHub</a></li>
+        </ul>
+
+        <p class="header">This project is maintained by <a class="header name" href="https://github.com/heynemann">heynemann</a></p>
+
+
+      </header>
+      <section>
+        <h1>
+<a name="materialgirl" class="anchor" href="#materialgirl"><span class="octicon octicon-link"></span></a>MaterialGirl</h1>
+
+<p>MaterialGirl is a library to keep materialized views and consolidations up-to-date.</p>
+
+<h1>
+<a name="installing" class="anchor" href="#installing"><span class="octicon octicon-link"></span></a>Installing</h1>
+
+<p>Intalling it is as easy as::</p>
+
+<pre><code>$ pip install materialgirl
+</code></pre>
+
+<h1>
+<a name="usage" class="anchor" href="#usage"><span class="octicon octicon-link"></span></a>Usage</h1>
+
+<p>MaterialGirl can be used to keep a set of data, called "materials", up-to-date.</p>
+
+<p>It is very useful to keep slow queries or consolidated data fast to get.</p>
+
+<p>You also need to select a storage (more on storages later). MaterialGirl comes bundled with two storages:</p>
+
+<ul>
+<li>materialgirl.storage.memory.InMemoryStorage</li>
+<li>materialgirl.storage.redis.RedisStorage</li>
+</ul><p>Using MaterialGirl:</p>
+
+<pre><code>from materialgirl import MaterialGirl
+from materialgirl.storage.memory import InMemoryStorage
+
+def get_very_slow_data():
+    return "this is very slow to get"
+
+storage = InMemoryStorage()
+girl = MaterialGirl(storage=storage)
+
+girl.add_material(
+    'my-very-slow-data-key',
+    get_very_slow_data,  # this should be the function to get up-to-date data
+    120  # the expiration in seconds
+)
+
+girl.run()  # this updates all the expired materials and should be run in a loop
+</code></pre>
+
+<h1>
+<a name="storages" class="anchor" href="#storages"><span class="octicon octicon-link"></span></a>Storages</h1>
+
+<p>The in-memory storage is more of a proof of concept and should only be used for very simple scenarios as it stores the data in-process.</p>
+
+<h2>
+<a name="redis-storage" class="anchor" href="#redis-storage"><span class="octicon octicon-link"></span></a>Redis Storage</h2>
+
+<p>The redis storage takes one parameter: a redis connection.</p>
+
+<pre><code>import redis
+from materialgirl.storage.redis import RedisStorage
+
+storage = RedisStorage(redis=redis.StrictRedis())
+</code></pre>
+
+<h1>
+<a name="contributing" class="anchor" href="#contributing"><span class="octicon octicon-link"></span></a>Contributing</h1>
+
+<p>Just fork, commit, pull request our way.</p>
+
+<h1>
+<a name="license" class="anchor" href="#license"><span class="octicon octicon-link"></span></a>License</h1>
+
+<p>MIT licensed.</p>
+      </section>
+      <footer>
+        <p><small>Hosted on <a href="http://pages.github.com">GitHub Pages</a> using the Dinky theme</small></p>
+      </footer>
+    </div>
+    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
+		
+  </body>
+</html>
