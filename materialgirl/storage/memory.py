@@ -10,6 +10,3 @@ class InMemoryStorage(Storage):
 
     def store(self, key, value, expiration=None):
         self.items[key] = value
-
-    def get(self, key):
-        return self.items[key]

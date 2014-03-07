@@ -30,3 +30,20 @@ class TestMaterialGirl(TestCase):
 
         expect(storage.items).to_include('test')
         expect(storage.items['test']).to_equal('woot')
+
+    def test_does_not_add_not_expired_materials(self):
+        storage = InMemoryStorage()
+        girl = Materializer(storage=storage)
+
+        girl.add_material(
+            'test',
+            lambda: 'woot'
+        )
+
+        girl.run()
+
+        storage.items = {}
+
+        girl.run()
+
+        expect(storage.items).to_be_empty()
