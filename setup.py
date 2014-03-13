@@ -42,7 +42,8 @@ MaterialGirl is a library to keep materialized views and consolidations up-to-da
     packages=find_packages(),
     include_package_data=True,
     install_requires=[
-        'redis'
+        'redis',
+        'msgpack-python',
     ],
     extras_require={
         'tests': tests_require,

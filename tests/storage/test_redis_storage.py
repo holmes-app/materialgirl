@@ -5,6 +5,7 @@ import time
 
 import redis
 from preggy import expect
+import msgpack
 
 from materialgirl.storage.redis import RedisStorage
 from tests.base import TestCase
@@ -19,12 +20,22 @@ class TestRedisStorage(TestCase):
         expect(storage).not_to_be_null()
         expect(storage.redis).to_equal(self.redis)
 
+    def test_can_store_none_as_value(self):
+        key = 'test-%s' % time.time()
+        storage = RedisStorage(self.redis)
+        storage.store(key, None, expiration=10)
+
+        value = self.redis.get(key)
+
+        expect(value).to_be_null()
+ 
     def test_can_store_value(self):
         key = 'test-%s' % time.time()
         storage = RedisStorage(self.redis)
         storage.store(key, 'woot', expiration=10)
 
         value = self.redis.get(key)
+        value = msgpack.unpackb(value, encoding='utf-8')
 
         expect(value).not_to_be_null()
         expect(value).to_equal('woot')
