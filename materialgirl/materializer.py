@@ -34,6 +34,7 @@ class Materializer(object):
         for key, material in self.materials.items():
             if material.is_expired:
                 self.storage.store(key, material.get(), expiration=material.expiration)
+                material.expiration_date = time() + material.expiration
 
     def get(self, key):
         if not key in self.materials:
