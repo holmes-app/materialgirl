@@ -76,6 +76,32 @@ girl.run()  # this updates all the expired materials and should be run in a loop
 </code></pre>
 
 <h1>
+<a name="retrieving-up-to-date-information" class="anchor" href="#retrieving-up-to-date-information"><span class="octicon octicon-link"></span></a>Retrieving Up-To-Date Information</h1>
+
+<p>Whenever you need to get the up-to-date information you set with material girl, just call the get method on an instance with the
+same materials as the one you are running to update date, like this:</p>
+
+<pre><code>from materialgirl import MaterialGirl
+from materialgirl.storage.memory import InMemoryStorage
+
+def get_very_slow_data():
+    return "this is very slow to get"
+
+storage = InMemoryStorage()
+girl = MaterialGirl(storage=storage)
+
+girl.add_material(
+    'my-very-slow-data-key',
+    get_very_slow_data,  # this should be the function to get up-to-date data
+    120  # the expiration in seconds
+)
+
+assert girl.get('my-very-slow-data-key') == 'this is very slow to get'
+</code></pre>
+
+<p>MaterialGirl is lazy. If it has not the up-to-date value in storage to give you, it will call your get method, update the storage and return the proper value.</p>
+
+<h1>
 <a name="storages" class="anchor" href="#storages"><span class="octicon octicon-link"></span></a>Storages</h1>
 
 <p>The in-memory storage is more of a proof of concept and should only be used for very simple scenarios as it stores the data in-process.</p>
@@ -89,6 +115,21 @@ girl.run()  # this updates all the expired materials and should be run in a loop
 from materialgirl.storage.redis import RedisStorage
 
 storage = RedisStorage(redis=redis.StrictRedis())
+</code></pre>
+
+<h2>
+<a name="creating-a-custom-storage" class="anchor" href="#creating-a-custom-storage"><span class="octicon octicon-link"></span></a>Creating a Custom Storage</h2>
+
+<p>Creating a custom storage is as simple as implementing two methods: <code>store</code> and <code>retrieve</code>:</p>
+
+<pre><code>from materialgirl.storage import Storage
+
+class MyCustomStorage(Storage):
+    def store(self, key, value, expiration=None):
+        # store the value somewhere under `key`
+
+    def get(self, key):
+        # retrieve the value for `key` from same storage solution
 </code></pre>
 
 <h1>
