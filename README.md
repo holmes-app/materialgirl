@@ -41,6 +41,31 @@ Using MaterialGirl:
 
     girl.run()  # this updates all the expired materials and should be run in a loop
 
+Retrieving Up-To-Date Information
+=================================
+
+Whenever you need to get the up-to-date information you set with material girl, just call the get method on an instance with the
+same materials as the one you are running to update date, like this:
+
+    from materialgirl import MaterialGirl
+    from materialgirl.storage.memory import InMemoryStorage
+
+    def get_very_slow_data():
+        return "this is very slow to get"
+
+    storage = InMemoryStorage()
+    girl = MaterialGirl(storage=storage)
+
+    girl.add_material(
+        'my-very-slow-data-key',
+        get_very_slow_data,  # this should be the function to get up-to-date data
+        120  # the expiration in seconds
+    )
+
+    assert girl.get('my-very-slow-data-key') == 'this is very slow to get'
+
+MaterialGirl is lazy. If it has not the up-to-date value in storage to give you, it will call your get method, update the storage and return the proper value.
+
 Storages
 ========
 
