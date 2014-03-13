@@ -56,6 +56,20 @@ The redis storage takes one parameter: a redis connection.
 
     storage = RedisStorage(redis=redis.StrictRedis())
 
+Creating a Custom Storage
+-------------------------
+
+Creating a custom storage is as simple as implementing two methods: `store` and `retrieve`:
+
+    from materialgirl.storage import Storage
+
+    class MyCustomStorage(Storage):
+        def store(self, key, value, expiration=None):
+            # store the value somewhere under `key`
+
+        def get(self, key):
+            # retrieve the value for `key` from same storage solution
+
 Contributing
 ============
 

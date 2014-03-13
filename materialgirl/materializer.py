@@ -34,3 +34,16 @@ class Materializer(object):
         for key, material in self.materials.items():
             if material.is_expired:
                 self.storage.store(key, material.get(), expiration=material.expiration)
+
+    def get(self, key):
+        if not key in self.materials:
+            raise ValueError('Key %s not found in materials. Maybe you forgot to call "add_material" for this key?' % key)
+
+        value = self.storage.retrieve(key)
+
+        if value is None:
+            material = self.materials[key]
+            value = material.get()
+            self.storage.store(key, value, expiration=material.expiration)
+
+        return value

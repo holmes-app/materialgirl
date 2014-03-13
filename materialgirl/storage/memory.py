@@ -10,3 +10,6 @@ class InMemoryStorage(Storage):
 
     def store(self, key, value, expiration=None):
         self.items[key] = value
+
+    def retrieve(self, key):
+        return self.items.get(key, None)

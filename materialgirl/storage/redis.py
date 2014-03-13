@@ -10,3 +10,6 @@ class RedisStorage(Storage):
 
     def store(self, key, value, expiration=10):
         self.redis.psetex(name=key, value=value, time_ms=int(expiration * 1000))
+
+    def retrieve(self, key):
+        return self.redis.get(key)

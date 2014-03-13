@@ -19,3 +19,16 @@ class TestInMemoryStorage(TestCase):
         expect(storage.items).to_length(1)
         expect(storage.items).to_include('test')
         expect(storage.items['test']).to_equal('woot')
+
+    def test_can_get_null_if_value_not_set(self):
+        storage = InMemoryStorage()
+
+        expect(storage.retrieve('key')).to_be_null()
+
+    def test_can_get_value(self):
+        storage = InMemoryStorage()
+        storage.store('test', 'woot', expiration=10)
+
+        value = storage.retrieve('test')
+
+        expect(value).to_equal('woot')

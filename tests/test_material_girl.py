@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import sys
+
 from preggy import expect
 
 from materialgirl import Materializer
@@ -47,3 +49,43 @@ class TestMaterialGirl(TestCase):
         girl.run()
 
         expect(storage.items).to_be_empty()
+
+    def test_raises_if_key_not_found(self):
+        storage = InMemoryStorage()
+        girl = Materializer(storage=storage)
+
+        try:
+            value = girl.get('test')
+        except ValueError:
+            err = sys.exc_info()[1]
+            expect(err).to_have_an_error_message_of(
+                'Key test not found in materials. Maybe you forgot to call "add_material" for this key?'
+            )
+        else:
+            assert False, "Should not have gotten this far"
+
+    def test_can_get_value_after_material_girl_run(self):
+        storage = InMemoryStorage()
+        girl = Materializer(storage=storage)
+
+        girl.add_material(
+            'test',
+            lambda: 'woot'
+        )
+
+        girl.run()
+
+        value = girl.get('test')
+        expect(value).to_equal('woot')
+
+    def test_can_get_value_if_material_girl_not_run(self):
+        storage = InMemoryStorage()
+        girl = Materializer(storage=storage)
+
+        girl.add_material(
+            'test',
+            lambda: 'woot'
+        )
+
+        value = girl.get('test')
+        expect(value).to_equal('woot')

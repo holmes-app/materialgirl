@@ -38,3 +38,17 @@ class TestRedisStorage(TestCase):
         value = self.redis.get(key)
 
         expect(value).to_be_null()
+
+    def test_can_get_null_if_value_not_set(self):
+        storage = RedisStorage(self.redis)
+
+        expect(storage.retrieve('invalid-key')).to_be_null()
+
+    def test_can_get_value(self):
+        key = 'test-3-%s' % time.time()
+        storage = RedisStorage(self.redis)
+        storage.store(key, 'woot', expiration=10)
+
+        value = storage.retrieve(key)
+
+        expect(value).to_equal('woot')
