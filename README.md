@@ -24,14 +24,14 @@ You also need to select a storage (more on storages later). MaterialGirl comes b
 
 Using MaterialGirl:
 
-    from materialgirl import MaterialGirl
+    from materialgirl import Materializer
     from materialgirl.storage.memory import InMemoryStorage
 
     def get_very_slow_data():
         return "this is very slow to get"
 
     storage = InMemoryStorage()
-    girl = MaterialGirl(storage=storage)
+    girl = Materializer(storage=storage)
 
     girl.add_material(
         'my-very-slow-data-key',
@@ -47,14 +47,14 @@ Retrieving Up-To-Date Information
 Whenever you need to get the up-to-date information you set with material girl, just call the get method on an instance with the
 same materials as the one you are running to update date, like this:
 
-    from materialgirl import MaterialGirl
+    from materialgirl import Materializer
     from materialgirl.storage.memory import InMemoryStorage
 
     def get_very_slow_data():
         return "this is very slow to get"
 
     storage = InMemoryStorage()
-    girl = MaterialGirl(storage=storage)
+    girl = Materializer(storage=storage)
 
     girl.add_material(
         'my-very-slow-data-key',
