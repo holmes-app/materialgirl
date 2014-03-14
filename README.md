@@ -47,7 +47,7 @@ Retrieving Up-To-Date Information
 =================================
 
 Whenever you need to get the up-to-date information you set with material girl, just call the get method on an instance with the
-same materials as the one you are running to update date, like this:
+same materials as the one you are running to update the data, like this:
 
     from materialgirl import Materializer
     from materialgirl.storage.memory import InMemoryStorage
