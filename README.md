@@ -41,6 +41,8 @@ Using MaterialGirl:
 
     girl.run()  # this updates all the expired materials and should be run in a loop
 
+To run the loop you can use whatever daemon, worker, runner solution you'd like. We recommend [Sheep](http://heynemann.github.io/sheep/).
+
 Retrieving Up-To-Date Information
 =================================
 
