@@ -94,7 +94,7 @@ Creating a custom storage is as simple as implementing two methods: `store` and 
         def store(self, key, value, expiration=None):
             # store the value somewhere under `key`
 
-        def get(self, key):
+        def retrieve(self, key):
             # retrieve the value for `key` from same storage solution
 
 Contributing
