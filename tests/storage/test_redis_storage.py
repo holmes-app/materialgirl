@@ -63,3 +63,14 @@ class TestRedisStorage(TestCase):
         value = storage.retrieve(key)
 
         expect(value).to_equal('woot')
+
+    def test_can_store_value_with_grace_value(self):
+        key = 'test-2-%s' % time.time()
+        storage = RedisStorage(self.redis)
+        storage.store(key, 'woot', expiration=0.05, grace_period=0.5)
+        time.sleep(0.1)
+
+        value = self.redis.get(key)
+        value = msgpack.unpackb(value, encoding='utf-8')
+
+        expect(value).to_equal('woot')

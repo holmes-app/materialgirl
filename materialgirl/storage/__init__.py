@@ -3,7 +3,7 @@
 
 
 class Storage(object):
-    def store(self, key, value, expiration=None):
+    def store(self, key, value, expiration=None, grace_period=None):
         raise NotImplementedError()
 
     def retrieve(self, key):
