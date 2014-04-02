@@ -71,6 +71,36 @@ assert girl.get('my-very-slow-data-key') == 'this is very slow to get'
 
 MaterialGirl is lazy. If it has not the up-to-date value in storage to give you, it will call your get method, update the storage and return the proper value.
 
+Defining a grace period
+=======================
+
+Sometimes you may need an information just before material girl updates it. In such cases you may have a cache miss. To avoid this, you can define a _grace period_ of time for the cached information:
+
+```python
+import time
+from materialgirl import Materializer
+from materialgirl.storage.memory import InMemoryStorage
+
+def get_very_slow_data():
+    return 'this is very slow to get'
+
+storage = InMemoryStorage()
+girl = Materializer(storage=storage)
+
+girl.add_material(
+    'my-very-slow-data-key',
+    get_very_slow_data,  # this should be the function to get up-to-date data
+    120,  # the expiration in seconds
+    240  # the grace period in seconds
+)
+
+time.sleep(140)
+
+assert girl.get('my-very-slow-data-key') == 'this is very slow to get'
+```
+
+This may not be the most up-to-date information, but cache misses become rare.
+
 Storages
 ========
 
