@@ -5,12 +5,13 @@ from time import time
 
 
 class Material(object):
-    def __init__(self, key, get_method, expiration=10):
+    def __init__(self, key, get_method, expiration=10, grace_period=0):
         self.key = key
         self.current_value = None
         self.get_method = get_method
         self.expiration = expiration
         self.expiration_date = time() + expiration
+        self.grace_period = grace_period
 
     @property
     def is_expired(self):
@@ -27,13 +28,13 @@ class Materializer(object):
 
         self.materials = {}
 
-    def add_material(self, key, get_method, expiration=10):
-        self.materials[key] = Material(key, get_method, expiration)
+    def add_material(self, key, get_method, expiration=10, grace_period=0):
+        self.materials[key] = Material(key, get_method, expiration, grace_period)
 
     def run(self):
         for key, material in self.materials.items():
             if material.is_expired:
-                self.storage.store(key, material.get(), expiration=material.expiration)
+                self.storage.store(key, material.get(), expiration=material.expiration, grace_period=material.grace_period)
                 material.expiration_date = time() + material.expiration
 
     def get(self, key):
@@ -45,6 +46,6 @@ class Materializer(object):
         if value is None:
             material = self.materials[key]
             value = material.get()
-            self.storage.store(key, value, expiration=material.expiration)
+            self.storage.store(key, value, expiration=material.expiration, grace_period=material.grace_period)
 
         return value

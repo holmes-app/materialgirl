@@ -8,7 +8,7 @@ class InMemoryStorage(Storage):
     def __init__(self):
         self.items = {}
 
-    def store(self, key, value, expiration=None):
+    def store(self, key, value, expiration=None, grace_period=None):
         self.items[key] = value
 
     def retrieve(self, key):
