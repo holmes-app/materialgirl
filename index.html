@@ -1,43 +1,36 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
+
   <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="chrome=1">
-    <title>Materialgirl by heynemann</title>
-    <link rel="stylesheet" href="stylesheets/styles.css">
-    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
-    <script src="javascripts/respond.js"></script>
-    <!--[if lt IE 9]>
-      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-    <![endif]-->
-    <!--[if lt IE 8]>
-    <link rel="stylesheet" href="stylesheets/ie.css">
-    <![endif]-->
-    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta charset='utf-8' />
+    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
+    <meta name="description" content="Materialgirl : MaterialGirl is a library to keep materialized views and consolidations up-to-date." />
 
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+
+    <title>Materialgirl</title>
   </head>
+
   <body>
-      <div id="header">
-        <nav>
-          <li class="fork"><a href="https://github.com/heynemann/materialgirl">View On GitHub</a></li>
-          <li class="downloads"><a href="https://github.com/heynemann/materialgirl/zipball/master">ZIP</a></li>
-          <li class="downloads"><a href="https://github.com/heynemann/materialgirl/tarball/master">TAR</a></li>
-          <li class="title">DOWNLOADS</li>
-        </nav>
-      </div><!-- end header -->
 
-    <div class="wrapper">
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/heynemann/materialgirl">View on GitHub</a>
 
-      <section>
-        <div id="title">
-          <h1>Materialgirl</h1>
-          <p>MaterialGirl is a library to keep materialized views and consolidations up-to-date.</p>
-          <hr>
-          <span class="credits left">Project maintained by <a href="https://github.com/heynemann">heynemann</a></span>
-          <span class="credits right">Hosted on GitHub Pages &mdash; Theme by <a href="https://twitter.com/michigangraham">mattgraham</a></span>
-        </div>
+          <h1 id="project_title">Materialgirl</h1>
+          <h2 id="project_tagline">MaterialGirl is a library to keep materialized views and consolidations up-to-date.</h2>
 
+            <section id="downloads">
+              <a class="zip_download_link" href="https://github.com/heynemann/materialgirl/zipball/master">Download this project as a .zip file</a>
+              <a class="tar_download_link" href="https://github.com/heynemann/materialgirl/tarball/master">Download this project as a tar.gz file</a>
+            </section>
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
         <h1>
 <a name="materialgirl" class="anchor" href="#materialgirl"><span class="octicon octicon-link"></span></a>MaterialGirl</h1>
 
@@ -54,7 +47,7 @@
 <h1>
 <a name="usage" class="anchor" href="#usage"><span class="octicon octicon-link"></span></a>Usage</h1>
 
-<p>MaterialGirl can be used to keep a set of data, called "materials", up-to-date.</p>
+<p>MaterialGirl can be used to keep a set of data, called <em>materials</em>, up-to-date.</p>
 
 <p>It is very useful to keep slow queries or consolidated data fast to get.</p>
 
@@ -65,23 +58,23 @@
 <li>materialgirl.storage.redis.RedisStorage</li>
 </ul><p>Using MaterialGirl:</p>
 
-<pre><code>from materialgirl import Materializer
-from materialgirl.storage.memory import InMemoryStorage
+<div class="highlight highlight-python"><pre><span class="kn">from</span> <span class="nn">materialgirl</span> <span class="kn">import</span> <span class="n">Materializer</span>
+<span class="kn">from</span> <span class="nn">materialgirl.storage.memory</span> <span class="kn">import</span> <span class="n">InMemoryStorage</span>
 
-def get_very_slow_data():
-    return "this is very slow to get"
+<span class="k">def</span> <span class="nf">get_very_slow_data</span><span class="p">():</span>
+    <span class="k">return</span> <span class="s">'this is very slow to get'</span>
 
-storage = InMemoryStorage()
-girl = Materializer(storage=storage)
+<span class="n">storage</span> <span class="o">=</span> <span class="n">InMemoryStorage</span><span class="p">()</span>
+<span class="n">girl</span> <span class="o">=</span> <span class="n">Materializer</span><span class="p">(</span><span class="n">storage</span><span class="o">=</span><span class="n">storage</span><span class="p">)</span>
 
-girl.add_material(
-    'my-very-slow-data-key',
-    get_very_slow_data,  # this should be the function to get up-to-date data
-    120  # the expiration in seconds
-)
+<span class="n">girl</span><span class="o">.</span><span class="n">add_material</span><span class="p">(</span>
+    <span class="s">'my-very-slow-data-key'</span><span class="p">,</span>
+    <span class="n">get_very_slow_data</span><span class="p">,</span>  <span class="c"># this should be the function to get up-to-date data</span>
+    <span class="mi">120</span>  <span class="c"># the expiration in seconds</span>
+<span class="p">)</span>
 
-girl.run()  # this updates all the expired materials and should be run in a loop
-</code></pre>
+<span class="n">girl</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>  <span class="c"># this updates all the expired materials and should be run in a loop</span>
+</pre></div>
 
 <p>To run the loop you can use whatever daemon, worker, runner solution you'd like. We recommend <a href="http://heynemann.github.io/sheep/">Sheep</a>.</p>
 
@@ -91,25 +84,53 @@ girl.run()  # this updates all the expired materials and should be run in a loop
 <p>Whenever you need to get the up-to-date information you set with material girl, just call the get method on an instance with the
 same materials as the one you are running to update the data, like this:</p>
 
-<pre><code>from materialgirl import Materializer
-from materialgirl.storage.memory import InMemoryStorage
+<div class="highlight highlight-python"><pre><span class="kn">from</span> <span class="nn">materialgirl</span> <span class="kn">import</span> <span class="n">Materializer</span>
+<span class="kn">from</span> <span class="nn">materialgirl.storage.memory</span> <span class="kn">import</span> <span class="n">InMemoryStorage</span>
 
-def get_very_slow_data():
-    return "this is very slow to get"
+<span class="k">def</span> <span class="nf">get_very_slow_data</span><span class="p">():</span>
+    <span class="k">return</span> <span class="s">'this is very slow to get'</span>
 
-storage = InMemoryStorage()
-girl = Materializer(storage=storage)
+<span class="n">storage</span> <span class="o">=</span> <span class="n">InMemoryStorage</span><span class="p">()</span>
+<span class="n">girl</span> <span class="o">=</span> <span class="n">Materializer</span><span class="p">(</span><span class="n">storage</span><span class="o">=</span><span class="n">storage</span><span class="p">)</span>
 
-girl.add_material(
-    'my-very-slow-data-key',
-    get_very_slow_data,  # this should be the function to get up-to-date data
-    120  # the expiration in seconds
-)
-
-assert girl.get('my-very-slow-data-key') == 'this is very slow to get'
-</code></pre>
+<span class="n">girl</span><span class="o">.</span><span class="n">add_material</span><span class="p">(</span>
+    <span class="s">'my-very-slow-data-key'</span><span class="p">,</span>
+    <span class="n">get_very_slow_data</span><span class="p">,</span>  <span class="c"># this should be the function to get up-to-date data</span>
+    <span class="mi">120</span>  <span class="c"># the expiration in seconds</span>
+<span class="p">)</span>
+<span class="k">assert</span> <span class="n">girl</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">'my-very-slow-data-key'</span><span class="p">)</span> <span class="o">==</span> <span class="s">'this is very slow to get'</span>
+</pre></div>
 
 <p>MaterialGirl is lazy. If it has not the up-to-date value in storage to give you, it will call your get method, update the storage and return the proper value.</p>
+
+<h1>
+<a name="defining-a-grace-period" class="anchor" href="#defining-a-grace-period"><span class="octicon octicon-link"></span></a>Defining a grace period</h1>
+
+<p>Sometimes you may need an information just before material girl updates it. In such cases you may have a cache miss. To avoid this, you can define a <em>grace period</em> of time for the cached information:</p>
+
+<div class="highlight highlight-python"><pre><span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">from</span> <span class="nn">materialgirl</span> <span class="kn">import</span> <span class="n">Materializer</span>
+<span class="kn">from</span> <span class="nn">materialgirl.storage.memory</span> <span class="kn">import</span> <span class="n">InMemoryStorage</span>
+
+<span class="k">def</span> <span class="nf">get_very_slow_data</span><span class="p">():</span>
+    <span class="k">return</span> <span class="s">'this is very slow to get'</span>
+
+<span class="n">storage</span> <span class="o">=</span> <span class="n">InMemoryStorage</span><span class="p">()</span>
+<span class="n">girl</span> <span class="o">=</span> <span class="n">Materializer</span><span class="p">(</span><span class="n">storage</span><span class="o">=</span><span class="n">storage</span><span class="p">)</span>
+
+<span class="n">girl</span><span class="o">.</span><span class="n">add_material</span><span class="p">(</span>
+    <span class="s">'my-very-slow-data-key'</span><span class="p">,</span>
+    <span class="n">get_very_slow_data</span><span class="p">,</span>  <span class="c"># this should be the function to get up-to-date data</span>
+    <span class="mi">120</span><span class="p">,</span>  <span class="c"># the expiration in seconds</span>
+    <span class="mi">240</span>  <span class="c"># the grace period in seconds</span>
+<span class="p">)</span>
+
+<span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">140</span><span class="p">)</span>
+
+<span class="k">assert</span> <span class="n">girl</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">'my-very-slow-data-key'</span><span class="p">)</span> <span class="o">==</span> <span class="s">'this is very slow to get'</span>
+</pre></div>
+
+<p>This may not be the most up-to-date information, but cache misses become rare.</p>
 
 <h1>
 <a name="storages" class="anchor" href="#storages"><span class="octicon octicon-link"></span></a>Storages</h1>
@@ -121,26 +142,26 @@ assert girl.get('my-very-slow-data-key') == 'this is very slow to get'
 
 <p>The redis storage takes one parameter: a redis connection.</p>
 
-<pre><code>import redis
-from materialgirl.storage.redis import RedisStorage
+<div class="highlight highlight-python"><pre><span class="kn">import</span> <span class="nn">redis</span>
+<span class="kn">from</span> <span class="nn">materialgirl.storage.redis</span> <span class="kn">import</span> <span class="n">RedisStorage</span>
 
-storage = RedisStorage(redis=redis.StrictRedis())
-</code></pre>
+<span class="n">storage</span> <span class="o">=</span> <span class="n">RedisStorage</span><span class="p">(</span><span class="n">redis</span><span class="o">=</span><span class="n">redis</span><span class="o">.</span><span class="n">StrictRedis</span><span class="p">())</span>
+</pre></div>
 
 <h2>
 <a name="creating-a-custom-storage" class="anchor" href="#creating-a-custom-storage"><span class="octicon octicon-link"></span></a>Creating a Custom Storage</h2>
 
 <p>Creating a custom storage is as simple as implementing two methods: <code>store</code> and <code>retrieve</code>:</p>
 
-<pre><code>from materialgirl.storage import Storage
+<div class="highlight highlight-python"><pre><span class="kn">from</span> <span class="nn">materialgirl.storage</span> <span class="kn">import</span> <span class="n">Storage</span>
 
-class MyCustomStorage(Storage):
-    def store(self, key, value, expiration=None):
-        # store the value somewhere under `key`
+<span class="k">class</span> <span class="nc">MyCustomStorage</span><span class="p">(</span><span class="n">Storage</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">store</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">expiration</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="c"># store the value somewhere under `key`</span>
 
-    def retrieve(self, key):
-        # retrieve the value for `key` from same storage solution
-</code></pre>
+    <span class="k">def</span> <span class="nf">retrieve</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+        <span class="c"># retrieve the value for `key` from same storage solution</span>
+</pre></div>
 
 <h1>
 <a name="contributing" class="anchor" href="#contributing"><span class="octicon octicon-link"></span></a>Contributing</h1>
@@ -152,9 +173,16 @@ class MyCustomStorage(Storage):
 
 <p>MIT licensed.</p>
       </section>
-
     </div>
-    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p class="copyright">Materialgirl maintained by <a href="https://github.com/heynemann">heynemann</a></p>
+        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
               <script type="text/javascript">
             var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
             document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
@@ -165,6 +193,7 @@ class MyCustomStorage(Storage):
             pageTracker._trackPageview();
             } catch(err) {}
           </script>
+
 
   </body>
 </html>
