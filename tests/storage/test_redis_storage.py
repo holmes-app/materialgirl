@@ -28,7 +28,7 @@ class TestRedisStorage(TestCase):
         value = self.redis.get(key)
 
         expect(value).to_be_null()
- 
+
     def test_can_store_value(self):
         key = 'test-%s' % time.time()
         storage = RedisStorage(self.redis)
