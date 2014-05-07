@@ -28,3 +28,16 @@ class RedisStorage(Storage):
             return None
 
         return msgpack.unpackb(value, encoding='utf-8')
+
+    def release_lock(self, lock):
+        return lock.release()
+
+    def lock_key(self, key):
+        return self.redis.lock('material-girl-%s-lock' % key)
+
+    def acquire_lock(self, key):
+        lock = self.lock_key(key)
+        has_acquired = lock.acquire(blocking=False)
+        if not has_acquired:
+            return None
+        return lock

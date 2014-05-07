@@ -3,10 +3,12 @@
 
 import sys
 
+from mock import Mock
 from preggy import expect
 
 from materialgirl import Materializer
 from materialgirl.storage.memory import InMemoryStorage
+from materialgirl.storage.redis import RedisStorage
 from tests.base import TestCase
 
 
@@ -89,3 +91,31 @@ class TestMaterialGirl(TestCase):
 
         value = girl.get('test')
         expect(value).to_equal('woot')
+
+    def test_can_lock_key(self):
+        storage = RedisStorage(self.redis)
+        girl = Materializer(storage=storage)
+
+        girl.add_material(
+            'test1',
+            lambda: 'woot1'
+        )
+
+        girl.add_material(
+            'test2',
+            lambda: 'woot2'
+        )
+
+        girl.storage.store = Mock()
+
+        girl.run()
+
+        expect(girl.storage.store.call_count).to_equal(2)
+
+        girl.storage.store = Mock()
+        girl.storage.acquire_lock = Mock(return_value=None)
+        girl.storage.release_lock = Mock()
+
+        girl.run()
+
+        expect(girl.storage.store.call_count).to_equal(0)
