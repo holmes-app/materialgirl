@@ -8,3 +8,9 @@ class Storage(object):
 
     def retrieve(self, key):
         raise NotImplementedError()
+
+    def release_lock(self, lock):
+        raise NotImplementedError()
+
+    def acquire_lock(self, key, expiration=None):
+        raise NotImplementedError()

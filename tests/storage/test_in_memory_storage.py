@@ -32,3 +32,23 @@ class TestInMemoryStorage(TestCase):
         value = storage.retrieve('test')
 
         expect(value).to_equal('woot')
+
+    def test_can_acquire_lock(self):
+        storage = InMemoryStorage()
+
+        lock = storage.acquire_lock('key-test')
+        expect(lock).not_to_be_null()
+
+        lock = storage.acquire_lock('key-test')
+        expect(lock).to_be_null()
+
+    def test_can_release_lock(self):
+        storage = InMemoryStorage()
+
+        lock = storage.acquire_lock('key-test')
+        expect(lock).not_to_be_null()
+
+        storage.release_lock('key-test')
+
+        lock = storage.acquire_lock('key-test')
+        expect(lock).not_to_be_null()

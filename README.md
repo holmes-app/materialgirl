@@ -132,6 +132,12 @@ class MyCustomStorage(Storage):
 
     def retrieve(self, key):
         # retrieve the value for `key` from same storage solution
+
+    def release_lock(self, lock):
+        # release a lock
+
+    def acquire_lock(self, key, expiration=None):
+        # acquire the lock for `key`
 ```
 
 Contributing
