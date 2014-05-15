@@ -35,6 +35,22 @@ class TestMaterialGirl(TestCase):
         expect(storage.items).to_include('test')
         expect(storage.items['test']).to_equal('woot')
 
+    def test_can_add_material_with_expiration_and_graceperiod(self):
+        storage = InMemoryStorage()
+        girl = Materializer(storage=storage)
+
+        girl.add_material(
+            'test',
+            lambda: 'woot',
+            expiration=2,
+            grace_period=4
+        )
+
+        girl.run()
+
+        expect(storage.items).to_include('test')
+        expect(storage.items['test']).to_equal('woot')
+
     def test_does_not_add_not_expired_materials(self):
         storage = InMemoryStorage()
         girl = Materializer(storage=storage)
@@ -57,7 +73,7 @@ class TestMaterialGirl(TestCase):
         girl = Materializer(storage=storage)
 
         try:
-            value = girl.get('test')
+            girl.get('test')
         except ValueError:
             err = sys.exc_info()[1]
             expect(err).to_have_an_error_message_of(

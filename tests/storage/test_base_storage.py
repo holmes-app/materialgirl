@@ -25,11 +25,33 @@ class TestBaseStorage(TestCase):
         else:
             assert False, "Should not have gotten this far"
 
-    def test_get_raises(self):
+    def test_retrieve_raises(self):
         storage = Storage()
 
         try:
             storage.retrieve('test')
+        except NotImplementedError:
+            err = sys.exc_info()[1]
+            expect(err).to_be_an_error_like(NotImplementedError)
+        else:
+            assert False, "Should not have gotten this far"
+
+    def test_release_lock_raises(self):
+        storage = Storage()
+
+        try:
+            storage.release_lock('test')
+        except NotImplementedError:
+            err = sys.exc_info()[1]
+            expect(err).to_be_an_error_like(NotImplementedError)
+        else:
+            assert False, "Should not have gotten this far"
+
+    def test_acquire_lock_raises(self):
+        storage = Storage()
+
+        try:
+            storage.acquire_lock('test')
         except NotImplementedError:
             err = sys.exc_info()[1]
             expect(err).to_be_an_error_like(NotImplementedError)
