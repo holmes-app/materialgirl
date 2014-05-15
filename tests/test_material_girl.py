@@ -13,6 +13,11 @@ from tests.base import TestCase
 
 
 class TestMaterialGirl(TestCase):
+    def woots_generator(self):
+        woots = ['woot1', 'woot2', 'woot3', 'woot4']
+        for woot in woots:
+            yield woot
+
     def test_can_create_girl(self):
         storage = InMemoryStorage()
         girl = Materializer(storage=storage)
@@ -51,7 +56,7 @@ class TestMaterialGirl(TestCase):
         expect(storage.items).to_include('test')
         expect(storage.items['test']).to_equal('woot')
 
-    def test_does_not_add_not_expired_materials(self):
+    def test_can_expire_materials(self):
         storage = InMemoryStorage()
         girl = Materializer(storage=storage)
 
@@ -62,11 +67,83 @@ class TestMaterialGirl(TestCase):
 
         girl.run()
 
+        expect(storage.items).to_length(1)
+        expect(storage.items['test']).to_equal('woot')
+
+        girl.expire('test')
+
+        expect(girl.is_expired('test')).to_be_true()
+
+        expect(storage.items).to_length(1)
+        expect(storage.items.get('test')).to_be_null()
+        expect(storage.items['_expired_test']).to_equal('woot')
+
+    def test_can_update_expired_materials(self):
+        storage = InMemoryStorage()
+        girl = Materializer(storage=storage)
+
+        woots = self.woots_generator()
+
+        girl.add_material(
+            'test',
+            lambda: woots.next()
+        )
+
+        girl.run()
+
+        expect(storage.items).to_length(1)
+        expect(storage.items['test']).to_equal('woot1')
+
+        storage.expire('test')
+
+        girl.run()
+
+        expect(storage.items).to_length(1)
+        expect(storage.items['test']).to_equal('woot2')
+
+    def test_can_update_deleted_materials(self):
+        storage = InMemoryStorage()
+        girl = Materializer(storage=storage)
+
+        woots = self.woots_generator()
+
+        girl.add_material(
+            'test',
+            lambda: woots.next()
+        )
+
+        girl.run()
+
+        expect(storage.items).to_length(1)
+        expect(storage.items['test']).to_equal('woot1')
+
         storage.items = {}
 
         girl.run()
 
-        expect(storage.items).to_be_empty()
+        expect(storage.items).to_length(1)
+        expect(storage.items['test']).to_equal('woot2')
+
+    def test_dont_update_not_expired_materials(self):
+        storage = InMemoryStorage()
+        girl = Materializer(storage=storage)
+
+        woots = self.woots_generator()
+
+        girl.add_material(
+            'test',
+            lambda: woots.next()
+        )
+
+        girl.run()
+
+        expect(storage.items).to_length(1)
+        expect(storage.items['test']).to_equal('woot1')
+
+        girl.run()
+
+        expect(storage.items).to_length(1)
+        expect(storage.items['test']).to_equal('woot1')
 
     def test_raises_if_key_not_found(self):
         storage = InMemoryStorage()
@@ -74,6 +151,26 @@ class TestMaterialGirl(TestCase):
 
         try:
             girl.get('test')
+        except ValueError:
+            err = sys.exc_info()[1]
+            expect(err).to_have_an_error_message_of(
+                'Key test not found in materials. Maybe you forgot to call "add_material" for this key?'
+            )
+        else:
+            assert False, "Should not have gotten this far"
+
+        try:
+            girl.is_expired('test')
+        except ValueError:
+            err = sys.exc_info()[1]
+            expect(err).to_have_an_error_message_of(
+                'Key test not found in materials. Maybe you forgot to call "add_material" for this key?'
+            )
+        else:
+            assert False, "Should not have gotten this far"
+
+        try:
+            girl.expire('test')
         except ValueError:
             err = sys.exc_info()[1]
             expect(err).to_have_an_error_message_of(

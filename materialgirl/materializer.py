@@ -31,6 +31,18 @@ class Materializer(object):
     def add_material(self, key, get_method, expiration=10, grace_period=0):
         self.materials[key] = Material(key, get_method, expiration, grace_period)
 
+    def expire(self, key):
+        if not key in self.materials:
+            raise ValueError('Key %s not found in materials. Maybe you forgot to call "add_material" for this key?' % key)
+
+        self.storage.expire(key)
+
+    def is_expired(self, key):
+        if not key in self.materials:
+            raise ValueError('Key %s not found in materials. Maybe you forgot to call "add_material" for this key?' % key)
+
+        return self.storage.is_expired(key)
+
     def run(self):
         for key, material in self.materials.items():
             lock = self.storage.acquire_lock(key)
@@ -38,7 +50,7 @@ class Materializer(object):
             if lock is None:
                 continue
 
-            if material.is_expired:
+            if self.storage.is_expired(key, material.expiration) or material.is_expired:
                 self.storage.store(key, material.get(), expiration=material.expiration, grace_period=material.grace_period)
                 material.expiration_date = time() + material.expiration
 

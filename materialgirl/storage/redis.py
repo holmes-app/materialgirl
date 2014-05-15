@@ -22,10 +22,14 @@ class RedisStorage(Storage):
         value = msgpack.packb(value, encoding='utf-8')
         self.redis.psetex(name=key, value=value, time_ms=time_ms)
 
+        self.redis.delete('_expired_%s' % key)
+
     def retrieve(self, key):
         value = self.redis.get(key)
         if value is None:
-            return None
+            value = self.redis.get('_expired_%s' % key)
+            if value is None:
+                return None
 
         return msgpack.unpackb(value, encoding='utf-8')
 
@@ -41,3 +45,14 @@ class RedisStorage(Storage):
         if not has_acquired:
             return None
         return lock
+
+    def is_expired(self, key, expiration=None):
+        return (
+            self.redis.exists('_expired_%s' % key)
+            or not self.redis.exists(key)
+            or expiration is not None and 1000 * expiration > self.redis.pttl(key)
+        )
+
+    def expire(self, key):
+        if not self.is_expired(key):
+            self.redis.rename(key, '_expired_%s' % key)

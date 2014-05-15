@@ -11,9 +11,10 @@ class InMemoryStorage(Storage):
 
     def store(self, key, value, expiration=None, grace_period=None):
         self.items[key] = value
+        self.items.pop('_expired_%s' % key, None)
 
     def retrieve(self, key):
-        return self.items.get(key, None)
+        return self.items.get(key, self.items.get('_expired_%s' % key, None))
 
     def release_lock(self, key):
         self.locks.remove(key)
@@ -23,3 +24,10 @@ class InMemoryStorage(Storage):
             return None
         self.locks.append(key)
         return key
+
+    def is_expired(self, key, expiration=None):
+        return '_expired_%s' % key in self.items or key not in self.items
+
+    def expire(self, key):
+        if not self.is_expired(key):
+            self.items['_expired_%s' % key] = self.items.pop(key)

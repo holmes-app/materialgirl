@@ -101,6 +101,48 @@ assert girl.get('my-very-slow-data-key') == 'this is very slow to get'
 
 This may not be the most up-to-date information, but cache misses become rare.
 
+Forcing and checking expiration
+===============================
+
+In cases you find necessary to force the expiration for a given material or check if it's expired, material girl won't walk away:
+
+```python
+import time
+from materialgirl import Materializer
+from materialgirl.storage.memory import InMemoryStorage
+
+def get_critical_data():
+    return 'this is a very critical information'
+
+storage = InMemoryStorage()
+girl = Materializer(storage=storage)
+
+girl.add_material(
+    'my-very-critical-data-key',
+    get_critical_data,  # this should be the function to get up-to-date data
+    120,  # the expiration in seconds
+    240  # the grace period in seconds
+)
+
+assert girl.is_expired('my-very-critical-data-key') is False
+
+girl.expire('my-very-critical-data-key')
+
+assert girl.is_expired('my-very-critical-data-key') is True
+
+# ...
+```
+
+Although expired materials will be updated in the next round of updates – a.k.a. `girl.run()` – they remain available until grace period is reached:
+
+```python
+# ...
+
+time.sleep(140)
+
+assert girl.get('my-very-critical-data-key') == 'this is a very critical information'
+```
+
 Storages
 ========
 

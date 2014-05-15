@@ -57,3 +57,25 @@ class TestBaseStorage(TestCase):
             expect(err).to_be_an_error_like(NotImplementedError)
         else:
             assert False, "Should not have gotten this far"
+
+    def test_is_expired_raises(self):
+        storage = Storage()
+
+        try:
+            storage.is_expired('test')
+        except NotImplementedError:
+            err = sys.exc_info()[1]
+            expect(err).to_be_an_error_like(NotImplementedError)
+        else:
+            assert False, "Should not have gotten this far"
+
+    def test_expire_raises(self):
+        storage = Storage()
+
+        try:
+            storage.expire('test')
+        except NotImplementedError:
+            err = sys.exc_info()[1]
+            expect(err).to_be_an_error_like(NotImplementedError)
+        else:
+            assert False, "Should not have gotten this far"

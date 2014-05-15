@@ -52,3 +52,55 @@ class TestInMemoryStorage(TestCase):
 
         lock = storage.acquire_lock('key-test')
         expect(lock).not_to_be_null()
+
+    def test_can_check_not_expired(self):
+        storage = InMemoryStorage()
+
+        expect(storage.is_expired('test')).to_be_true()
+
+        storage.store('test', 'woot', expiration=10)
+
+        expect(storage.is_expired('test')).to_be_false()
+
+    def test_can_expire(self):
+        storage = InMemoryStorage()
+        storage.store('test', 'woot', expiration=10)
+
+        storage.expire('test')
+
+        expect(storage.is_expired('test')).to_be_true()
+
+    def test_can_expire_invalid_key(self):
+        storage = InMemoryStorage()
+
+        expect(storage.is_expired('invalid-key')).to_be_true()
+
+        storage.expire('invalid-key')
+
+        expect(storage.is_expired('invalid-key')).to_be_true()
+
+    def test_can_store_expired(self):
+        storage = InMemoryStorage()
+        storage.store('test', 'woot', expiration=10)
+
+        storage.expire('test')
+
+        expect(storage.is_expired('test')).to_be_true()
+
+        storage.store('test', 'woot', expiration=10)
+
+        value = storage.retrieve('test')
+
+        expect(value).to_equal('woot')
+
+    def test_can_get_even_if_expired(self):
+        storage = InMemoryStorage()
+        storage.store('test', 'woot', expiration=10)
+
+        storage.expire('test')
+
+        expect(storage.is_expired('test')).to_be_true()
+
+        value = storage.retrieve('test')
+
+        expect(value).to_equal('woot')

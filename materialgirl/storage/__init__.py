@@ -14,3 +14,9 @@ class Storage(object):
 
     def acquire_lock(self, key, expiration=None):
         raise NotImplementedError()
+
+    def is_expired(self, key, expiration=None):
+        raise NotImplementedError()
+
+    def expire(self, key):
+        raise NotImplementedError()

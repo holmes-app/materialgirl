@@ -99,3 +99,77 @@ class TestRedisStorage(TestCase):
         expect(lock).not_to_be_null()
 
         storage.release_lock(lock)
+
+    def test_can_check_not_expired(self):
+        key = 'test-4-%s' % time.time()
+        self.redis.delete(key)
+        storage = RedisStorage(self.redis)
+
+        expect(storage.is_expired(key)).to_be_true()
+
+        storage.store(key, 'woot', expiration=10)
+
+        expect(storage.is_expired(key)).to_be_false()
+
+    def test_can_check_expired(self):
+        key = 'test-4-%s' % time.time()
+        self.redis.delete(key)
+        storage = RedisStorage(self.redis)
+
+        expect(storage.is_expired(key)).to_be_true()
+
+        storage.store(key, 'woot', expiration=10, grace_period=20)
+        self.redis.pexpire(key, 9000)
+
+        expect(storage.is_expired(key, 10)).to_be_true()
+
+    def test_can_expire(self):
+        key = 'test-4-%s' % time.time()
+        self.redis.delete(key)
+        storage = RedisStorage(self.redis)
+        storage.store(key, 'woot', expiration=10)
+
+        storage.expire(key)
+
+        expect(storage.is_expired(key)).to_be_true()
+
+    def test_can_expire_invalid_key(self):
+        key = 'test-4-%s' % time.time()
+        self.redis.delete(key)
+        storage = RedisStorage(self.redis)
+
+        expect(storage.is_expired('invalid-key')).to_be_true()
+
+        storage.expire('invalid-key')
+
+        expect(storage.is_expired('invalid-key')).to_be_true()
+
+    def test_can_store_expired(self):
+        key = 'test-4-%s' % time.time()
+        self.redis.delete(key)
+        storage = RedisStorage(self.redis)
+        storage.store(key, 'woot', expiration=10)
+
+        storage.expire(key)
+
+        expect(storage.is_expired(key)).to_be_true()
+
+        storage.store(key, 'woot', expiration=10)
+
+        value = storage.retrieve(key)
+
+        expect(value).to_equal('woot')
+
+    def test_can_get_even_if_expired(self):
+        key = 'test-4-%s' % time.time()
+        self.redis.delete(key)
+        storage = RedisStorage(self.redis)
+        storage.store(key, 'woot', expiration=10)
+
+        storage.expire(key)
+
+        expect(storage.is_expired(key)).to_be_true()
+
+        value = storage.retrieve(key)
+
+        expect(value).to_equal('woot')
