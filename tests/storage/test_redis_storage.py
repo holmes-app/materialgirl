@@ -119,7 +119,25 @@ class TestRedisStorage(TestCase):
         expect(storage.is_expired(key)).to_be_true()
 
         storage.store(key, 'woot', expiration=10, grace_period=20)
+
+        expect(storage.is_expired(key, 10)).to_be_false()
+
         self.redis.pexpire(key, 9000)
+
+        expect(storage.is_expired(key, 10)).to_be_true()
+
+    def test_can_check_expired_again(self):
+        key = 'test-4-%s' % time.time()
+        self.redis.delete(key)
+        storage = RedisStorage(self.redis)
+
+        expect(storage.is_expired(key)).to_be_true()
+
+        storage.store(key, 'woot', expiration=10, grace_period=20)
+
+        expect(storage.is_expired(key, 10)).to_be_false()
+
+        self.redis.delete(key)
 
         expect(storage.is_expired(key, 10)).to_be_true()
 
