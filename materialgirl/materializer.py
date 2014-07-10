@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import logging
 from time import time
 
 
@@ -45,16 +46,23 @@ class Materializer(object):
 
     def run(self):
         for key, material in self.materials.items():
+            logging.info('Acquiring lock for %s...' % key)
             lock = self.storage.acquire_lock(key)
 
             if lock is None:
+                logging.info('%s is locked, skipping.' % key)
                 continue
 
             if self.storage.is_expired(key, material.expiration) or material.is_expired:
+                logging.info('Retrieving %s...' % key)
                 self.storage.store(key, material.get(), expiration=material.expiration, grace_period=material.grace_period)
+                logging.info('Storing %s...' % key)
                 material.expiration_date = time() + material.expiration
 
+            logging.info('Releasing lock for %s...' % key)
             self.storage.release_lock(lock)
+
+            logging.info('Done with %s.' % key)
 
     def get(self, key):
         if not key in self.materials:
