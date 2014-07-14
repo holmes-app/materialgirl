@@ -47,7 +47,7 @@ class Materializer(object):
     def run(self):
         for key, material in self.materials.items():
             logging.info('Acquiring lock for %s...' % key)
-            lock = self.storage.acquire_lock(key)
+            lock = self.storage.acquire_lock(key, timeout=material.expiration)
 
             if lock is None:
                 logging.info('%s is locked, skipping.' % key)

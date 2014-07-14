@@ -19,7 +19,7 @@ class InMemoryStorage(Storage):
     def release_lock(self, key):
         self.locks.remove(key)
 
-    def acquire_lock(self, key):
+    def acquire_lock(self, key, timeout=None):
         if key in self.locks:
             return None
         self.locks.append(key)

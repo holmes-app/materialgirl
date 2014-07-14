@@ -3,6 +3,7 @@
 
 import time
 
+from mock import Mock
 from preggy import expect
 import msgpack
 
@@ -99,6 +100,22 @@ class TestRedisStorage(TestCase):
         expect(lock).not_to_be_null()
 
         storage.release_lock(lock)
+
+    def test_can_acquire_lock_without_timeout(self):
+        redis = Mock()
+
+        key = 'test-%s' % time.time()
+        RedisStorage(redis).acquire_lock(key)
+
+        redis.lock.assert_called_once_with('%s-_LOCK_' % key, timeout=None)
+
+    def test_can_acquire_lock_with_timeout(self):
+        redis = Mock()
+
+        key = 'test-%s' % time.time()
+        RedisStorage(redis).acquire_lock(key, 10)
+
+        redis.lock.assert_called_once_with('%s-_LOCK_' % key, timeout=10)
 
     def test_can_check_not_expired(self):
         key = 'test-4-%s' % time.time()

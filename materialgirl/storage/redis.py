@@ -36,11 +36,8 @@ class RedisStorage(Storage):
     def release_lock(self, lock):
         return lock.release()
 
-    def lock_key(self, key):
-        return self.redis.lock('%s-_LOCK_' % key)
-
-    def acquire_lock(self, key):
-        lock = self.lock_key(key)
+    def acquire_lock(self, key, timeout=None):
+        lock = self.redis.lock('%s-_LOCK_' % key, timeout=timeout)
         has_acquired = lock.acquire(blocking=False)
         if not has_acquired:
             return None
