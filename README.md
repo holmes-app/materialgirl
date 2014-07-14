@@ -1,4 +1,4 @@
-MaterialGirl
+MaterialGirl [![Build Status](https://secure.travis-ci.org/holmes-app/materialgirl.png)](https://travis-ci.org/holmes-app/materialgirl)
 ============
 
 MaterialGirl is a library to keep materialized views and consolidations up-to-date.
