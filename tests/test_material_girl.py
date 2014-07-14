@@ -3,7 +3,7 @@
 
 import sys
 
-from mock import Mock, patch
+from mock import Mock, patch, call
 from preggy import expect
 
 from materialgirl import Materializer
@@ -256,3 +256,59 @@ class TestMaterialGirl(TestCase):
         expect(storage.acquire_lock.call_count).to_equal(2)
         expect(storage.release_lock.call_count).to_equal(0)
         expect(logging_info_mock.call_count).to_equal(4)
+
+    def test_can_lock_key_without_timeout(self):
+        storage = Mock(store=Mock(), acquire_lock=Mock())
+
+        girl = Materializer(storage=storage)
+        girl.add_material(
+            'test1',
+            lambda: 'woot'
+        )
+        girl.add_material(
+            'test2',
+            lambda: 'woot'
+        )
+
+        girl.run()
+
+        expect(storage.store.call_count).to_equal(2)
+        expect(storage.acquire_lock.call_count).to_equal(2)
+        storage.acquire_lock.assert_has_calls([
+            call(
+                'test1',
+                timeout=None
+            ), call(
+                'test2',
+                timeout=None
+            )
+        ])
+
+    def test_can_lock_key_with_timeout(self):
+        storage = Mock(store=Mock(), acquire_lock=Mock())
+
+        girl = Materializer(storage=storage)
+        girl.add_material(
+            'test1',
+            lambda: 'woot',
+            lock_timeout=1
+        )
+        girl.add_material(
+            'test2',
+            lambda: 'woot',
+            lock_timeout=2
+        )
+
+        girl.run()
+
+        expect(storage.store.call_count).to_equal(2)
+        expect(storage.acquire_lock.call_count).to_equal(2)
+        storage.acquire_lock.assert_has_calls([
+            call(
+                'test1',
+                timeout=1
+            ), call(
+                'test2',
+                timeout=2
+            )
+        ])

@@ -6,13 +6,14 @@ from time import time
 
 
 class Material(object):
-    def __init__(self, key, get_method, expiration=10, grace_period=0):
+    def __init__(self, key, get_method, expiration=10, grace_period=0, lock_timeout=None):
         self.key = key
         self.current_value = None
         self.get_method = get_method
         self.expiration = expiration
         self.expiration_date = time() + expiration
         self.grace_period = grace_period
+        self.lock_timeout = lock_timeout
 
     @property
     def is_expired(self):
@@ -29,8 +30,8 @@ class Materializer(object):
 
         self.materials = {}
 
-    def add_material(self, key, get_method, expiration=10, grace_period=0):
-        self.materials[key] = Material(key, get_method, expiration, grace_period)
+    def add_material(self, key, get_method, expiration=10, grace_period=0, lock_timeout=None):
+        self.materials[key] = Material(key, get_method, expiration, grace_period, lock_timeout)
 
     def expire(self, key):
         if not key in self.materials:
@@ -47,7 +48,7 @@ class Materializer(object):
     def run(self):
         for key, material in self.materials.items():
             logging.info('Acquiring lock for %s...' % key)
-            lock = self.storage.acquire_lock(key, timeout=material.expiration)
+            lock = self.storage.acquire_lock(key, timeout=material.lock_timeout)
 
             if lock is None:
                 logging.info('%s is locked, skipping.' % key)
