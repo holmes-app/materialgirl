@@ -47,7 +47,7 @@ class RedisStorage(Storage):
         return (
             self.redis.exists('_expired_%s' % key)
             or not self.redis.exists(key)
-            or expiration is not None and 1000 * expiration > self.redis.pttl(key)
+            or expiration is not None and expiration > self.redis.ttl(key)
         )
 
     def expire(self, key):
