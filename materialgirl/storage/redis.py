@@ -37,7 +37,7 @@ class RedisStorage(Storage):
         return lock.release()
 
     def lock_key(self, key):
-        return self.redis.lock('material-girl-%s-lock' % key)
+        return self.redis.lock('%s-_LOCK_' % key)
 
     def acquire_lock(self, key):
         lock = self.lock_key(key)
