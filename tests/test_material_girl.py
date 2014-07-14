@@ -13,7 +13,8 @@ from tests.base import TestCase
 
 
 class TestMaterialGirl(TestCase):
-    def woots_generator(self):
+    @staticmethod
+    def woots_generator():
         woots = ['woot1', 'woot2', 'woot3', 'woot4']
         for woot in woots:
             yield woot
@@ -86,7 +87,7 @@ class TestMaterialGirl(TestCase):
 
         girl.add_material(
             'test',
-            lambda: woots.next()
+            lambda: next(woots)
         )
 
         girl.run()
@@ -109,7 +110,7 @@ class TestMaterialGirl(TestCase):
 
         girl.add_material(
             'test',
-            lambda: woots.next()
+            lambda: next(woots)
         )
 
         girl.run()
@@ -132,7 +133,7 @@ class TestMaterialGirl(TestCase):
 
         girl.add_material(
             'test',
-            lambda: woots.next()
+            lambda: next(woots)
         )
 
         girl.run()
