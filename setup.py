@@ -37,7 +37,7 @@ MaterialGirl is a library to keep materialized views and consolidations up-to-da
         'Operating System :: Unix',
         'Operating System :: OS Independent',
         'Programming Language :: Python :: 2.7',
-        'Programming Language :: Python :: 3.3',
+        'Programming Language :: Python :: 3.4',
     ],
     packages=find_packages(),
     include_package_data=True,
