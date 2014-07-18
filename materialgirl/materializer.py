@@ -25,8 +25,9 @@ class Material(object):
 
 
 class Materializer(object):
-    def __init__(self, storage):
+    def __init__(self, storage, load_on_cachemiss=True):
         self.storage = storage
+        self.load_on_cachemiss = load_on_cachemiss
 
         self.materials = {}
 
@@ -71,7 +72,7 @@ class Materializer(object):
 
         value = self.storage.retrieve(key)
 
-        if value is None:
+        if value is None and self.load_on_cachemiss:
             material = self.materials[key]
             value = material.get()
             self.storage.store(key, value, expiration=material.expiration, grace_period=material.grace_period)

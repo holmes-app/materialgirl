@@ -312,3 +312,21 @@ class TestMaterialGirl(TestCase):
                 timeout=2
             )
         ])
+
+    def test_can_miss_the_cache(self):
+        storage = Mock(retrieve=Mock(return_value=None))
+
+        girl = Materializer(storage=storage, load_on_cachemiss=False)
+        girl.add_material('test', lambda: 'woot')
+
+        girl.run()
+        value = girl.get('test')
+
+        expect(value).to_be_null()
+        expect(storage.acquire_lock.call_count).to_equal(1)
+        storage.store.assert_called_once_with(
+            'test',
+            'woot',
+            expiration=10,
+            grace_period=0
+        )
